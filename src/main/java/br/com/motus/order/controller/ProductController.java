@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +43,29 @@ public class ProductController {
 
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> findById(@PathVariable("id") String id){
+
+        Optional<Product> productOptional = productService.findById(id);
+
+            if(productOptional.isPresent()) {
+                ProductResponseDTO productResponseDTO = productOptional.map(product ->
+                        ProductResponseDTO.builder()
+                                .id(product.getId())
+                                .code(product.getCode())
+                                .name(product.getName())
+                                .price(product.getPrice())
+                                .dtCreated(product.getDtCreated())
+                                .dtUpdated(product.getDtUpdated())
+                                .build()
+                ).get();
+
+                return ResponseEntity.ok().body(productResponseDTO);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+    }
     @PostMapping
     public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductCreateRequestDTO productCreateRequestDTO){
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -23,5 +24,9 @@ public class ProductService {
     public Product save(Product product) {
         product.setDtCreated(LocalDateTime.now());
         return productRepository.save(product);
+    }
+
+    public Optional<Product> findById(String id) {
+        return productRepository.findById(id);
     }
 }
