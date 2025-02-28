@@ -10,9 +10,11 @@ import java.util.List;
 @Data
 @Builder
 public class OrderResponseDTO {
+
     private String id;
-    private List<ProductResponseDTO> products;
+    private List<OrderProductResponseDTO> products;
     private String status;
     private LocalDateTime dtCreated;
     private LocalDateTime dtUpdated;
+
 }

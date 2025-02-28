@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 @Builder
 public class OrderRequestDTO {
-    private List<String> productIds;
+    private List<OrderProductRequestDTO> products;
     private String status;
 }

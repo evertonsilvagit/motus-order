@@ -21,11 +21,6 @@ public class Product {
     private String code;
     private String name;
     private BigDecimal price;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "order_id")
-    private Order order;
-
     private LocalDateTime dtCreated;
     private LocalDateTime dtUpdated;
 

@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Builder
@@ -20,12 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String status;
-
-    @OneToMany(mappedBy = "order")
-    private List<Product> products;
-
     private LocalDateTime dtCreated;
     private LocalDateTime dtUpdated;
-
 
 }
