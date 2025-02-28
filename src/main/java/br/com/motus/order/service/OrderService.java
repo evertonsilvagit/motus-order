@@ -3,11 +3,13 @@ package br.com.motus.order.service;
 import br.com.motus.order.controller.dto.order.OrderProductResponseDTO;
 import br.com.motus.order.controller.dto.order.OrderRequestDTO;
 import br.com.motus.order.controller.dto.order.OrderResponseDTO;
+import br.com.motus.order.controller.dto.order.OrderWithTotalPriceDTO;
 import br.com.motus.order.model.Order;
 import br.com.motus.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,7 @@ public class OrderService {
     }
 
     public Optional<Order> findById(String id){
+        // TODO: Budcar produtos
         return orderRepository.findById(id);
     }
 
@@ -69,6 +72,22 @@ public class OrderService {
                 .dtCreated(savedOrder.getDtCreated())
                 .dtUpdated(savedOrder.getDtUpdated())
                 .products(productResponseDTOS)
+                .build();
+
+    }
+
+    public OrderWithTotalPriceDTO getOrderWithTotalPrice(String id) {
+
+        double sum = orderRepository.findOrderWithProducts(id)
+                .stream()
+                .map(orderProductRow -> orderProductRow.getPrice().multiply(
+                                BigDecimal.valueOf(orderProductRow.getQuantity()))
+                ).mapToDouble(BigDecimal::doubleValue)
+                .sum();
+
+        return OrderWithTotalPriceDTO.builder()
+                .orderId(id)
+                .totalPrice(BigDecimal.valueOf(sum))
                 .build();
 
     }

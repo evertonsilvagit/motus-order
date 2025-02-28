@@ -19,7 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
                 top.product_id as productId,
                 tp.code,
                 tp.name,
-                tp.price
+                tp.price,
+                top.quantity
             FROM tb_order_product top
             INNER JOIN tb_product as tp on top.product_id = tp.id
             WHERE top.order_id = :orderId

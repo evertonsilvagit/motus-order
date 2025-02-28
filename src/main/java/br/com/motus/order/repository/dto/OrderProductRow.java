@@ -15,4 +15,6 @@ public class OrderProductRow {
     private String code;
     private String name;
     private BigDecimal price;
+    private Integer quantity;
+
 }

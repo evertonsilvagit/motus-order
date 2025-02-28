@@ -2,6 +2,7 @@ package br.com.motus.order.controller;
 
 import br.com.motus.order.controller.dto.order.OrderRequestDTO;
 import br.com.motus.order.controller.dto.order.OrderResponseDTO;
+import br.com.motus.order.controller.dto.order.OrderWithTotalPriceDTO;
 import br.com.motus.order.model.Order;
 import br.com.motus.order.service.OrderService;
 import org.springframework.http.HttpStatus;
@@ -57,6 +58,11 @@ public class OrderController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{id}/fullprice")
+    public ResponseEntity<OrderWithTotalPriceDTO> orderWithTotalPrice(@PathVariable("id") String id){
+        return ResponseEntity.ok().body(orderService.getOrderWithTotalPrice(id));
     }
 
     @PostMapping
