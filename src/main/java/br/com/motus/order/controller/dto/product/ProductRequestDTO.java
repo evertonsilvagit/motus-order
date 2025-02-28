@@ -1,4 +1,4 @@
-package br.com.motus.order.controller.dto.product.request;
+package br.com.motus.order.controller.dto.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCreateRequestDTO {
+public class ProductRequestDTO {
 
     private String code;
     private String name;

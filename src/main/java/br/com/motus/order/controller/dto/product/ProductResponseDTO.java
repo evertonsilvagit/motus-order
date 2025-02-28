@@ -1,4 +1,4 @@
-package br.com.motus.order.controller.dto.product.response;
+package br.com.motus.order.controller.dto.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

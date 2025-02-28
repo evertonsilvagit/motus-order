@@ -1,14 +1,14 @@
 package br.com.motus.order.controller;
 
-import br.com.motus.order.controller.dto.product.request.ProductCreateRequestDTO;
-import br.com.motus.order.controller.dto.product.response.ProductResponseDTO;
+import br.com.motus.order.controller.dto.product.ProductRequestDTO;
+import br.com.motus.order.controller.dto.product.ProductResponseDTO;
+import br.com.motus.order.exception.ProductNotFoundException;
 import br.com.motus.order.model.Product;
 import br.com.motus.order.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,13 +66,14 @@ public class ProductController {
             }
 
     }
+
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductCreateRequestDTO productCreateRequestDTO){
+    public ResponseEntity<ProductResponseDTO> create(@RequestBody ProductRequestDTO productRequestDTO){
 
         Product product = Product.builder()
-                .code(productCreateRequestDTO.getCode())
-                .name(productCreateRequestDTO.getName())
-                .price(productCreateRequestDTO.getPrice())
+                .code(productRequestDTO.getCode())
+                .name(productRequestDTO.getName())
+                .price(productRequestDTO.getPrice())
                 .build();
 
         Product createdProduct = productService.save(product);
@@ -86,6 +87,39 @@ public class ProductController {
                 .build();
 
         return ResponseEntity.ok().body(productResponseDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> replace(@PathVariable("id") String id, @RequestBody ProductRequestDTO productRequestDTO) {
+
+        Product product = Product.builder()
+                .code(productRequestDTO.getCode())
+                .name(productRequestDTO.getName())
+                .price(productRequestDTO.getPrice())
+                .build();
+
+        try {
+            Product replacedProduct = productService.replace(id, product);
+
+            ProductResponseDTO productResponseDTO = ProductResponseDTO.builder().build();
+            productResponseDTO.setId(replacedProduct.getId());
+            productResponseDTO.setCode(replacedProduct.getCode());
+            productResponseDTO.setName(replacedProduct.getName());
+            productResponseDTO.setPrice(replacedProduct.getPrice());
+            productResponseDTO.setDtCreated(replacedProduct.getDtCreated());
+            productResponseDTO.setDtUpdated(replacedProduct.getDtUpdated());
+
+            return ResponseEntity.ok().body(productResponseDTO);
+        } catch(ProductNotFoundException productNotFoundException) {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> delete(@PathVariable("id") String id){
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
