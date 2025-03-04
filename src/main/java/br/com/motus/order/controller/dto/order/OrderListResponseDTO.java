@@ -8,11 +8,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class OrderResponseDTO {
+public class OrderListResponseDTO {
 
     private String id;
     private String status;
-    private List<OrderProductResponseDTO> products;
     private LocalDateTime dtCreated;
     private LocalDateTime dtUpdated;
 

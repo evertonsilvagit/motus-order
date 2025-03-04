@@ -1,7 +1,10 @@
 package br.com.motus.order.service;
 
 import br.com.motus.order.exception.ProductNotFoundException;
+import br.com.motus.order.model.OrderProduct;
 import br.com.motus.order.model.Product;
+import br.com.motus.order.repository.OrderProductRepository;
+import br.com.motus.order.repository.OrderRepository;
 import br.com.motus.order.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +17,12 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository){
+    private final OrderProductRepository orderProductRepository;
+
+
+    public ProductService(ProductRepository productRepository, OrderProductRepository orderProductRepository){
         this.productRepository = productRepository;
+        this.orderProductRepository = orderProductRepository;
     }
 
     public List<Product> list(){
@@ -51,7 +58,14 @@ public class ProductService {
 
     }
 
-    public void delete(String id) {
-        productRepository.deleteById(id);
+    public boolean delete(String productId) {
+        Optional<OrderProduct> optionalOrderProduct = orderProductRepository.findByProductId(productId);
+
+        if(optionalOrderProduct.isEmpty()){
+            productRepository.deleteById(productId);
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,16 +1,15 @@
 package br.com.motus.order.controller;
 
+import br.com.motus.order.controller.dto.order.OrderListResponseDTO;
 import br.com.motus.order.controller.dto.order.OrderRequestDTO;
 import br.com.motus.order.controller.dto.order.OrderResponseDTO;
 import br.com.motus.order.controller.dto.order.OrderWithTotalPriceDTO;
-import br.com.motus.order.model.Order;
 import br.com.motus.order.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,11 +23,11 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> list() {
-        List<OrderResponseDTO> orderList = orderService.list()
+    public ResponseEntity<List<OrderListResponseDTO>> list() {
+        List<OrderListResponseDTO> orderList = orderService.list()
                 .stream()
                 .map(order ->
-                        OrderResponseDTO.builder()
+                        OrderListResponseDTO.builder()
                                 .id(order.getId())
                                 .status(order.getStatus())
                                 .dtCreated(order.getDtCreated())
@@ -42,22 +41,9 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponseDTO> findById(@PathVariable("id") String id) {
-        Optional<Order> orderOptional = orderService.findById(id);
-
-        if (orderOptional.isPresent()) {
-            OrderResponseDTO orderResponseDTO = orderOptional.map(order ->
-                    OrderResponseDTO.builder()
-                            .id(order.getId())
-                            .status(order.getStatus())
-                            .dtCreated(order.getDtCreated())
-                            .dtUpdated(order.getDtUpdated())
-                            .build()
-            ).get();
-
-            return ResponseEntity.ok().body(orderResponseDTO);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return orderService.findById(id)
+                                .map(orderResponseDTO -> ResponseEntity.ok().body(orderResponseDTO))
+                                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}/fullprice")
@@ -72,4 +58,17 @@ public class OrderController {
                 orderService.save(orderRequestDTO)
         );
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderResponseDTO> replace(
+            @PathVariable String id,
+            @RequestBody OrderRequestDTO orderRequestDTO){
+
+        return orderService.replace(id, orderRequestDTO)
+                                .map(orderResponseDTO -> ResponseEntity.ok().body(orderResponseDTO))
+                                .orElseGet(() -> ResponseEntity.notFound().build());
+
+    }
+
+
 }

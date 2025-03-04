@@ -28,4 +28,8 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     nativeQuery = true)
     List<OrderProductRow> findOrderWithProducts(String orderId);
 
+    @Modifying
+    @Query(value = "DELETE FROM tb_order_product where order_id = :orderId", nativeQuery = true)
+    void deleteProductsFromOrderById(String orderId);
+
 }

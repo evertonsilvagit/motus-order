@@ -29,9 +29,28 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public Optional<Order> findById(String id){
-        // TODO: Budcar produtos
-        return orderRepository.findById(id);
+    public Optional<OrderResponseDTO> findById(String id){
+        return orderRepository.findById(id)
+                .map(order -> {
+                    List<OrderProductResponseDTO> products = orderRepository.findOrderWithProducts(order.getId())
+                            .stream()
+                            .map(orderProductRow -> OrderProductResponseDTO.builder()
+                                        .id(orderProductRow.getProductId())
+                                        .code(orderProductRow.getCode())
+                                        .name(orderProductRow.getName())
+                                        .price(orderProductRow.getPrice())
+                                        .quantity(orderProductRow.getQuantity())
+                                    .build())
+                            .toList();
+
+                    return OrderResponseDTO.builder()
+                            .id(order.getId())
+                            .status(order.getStatus())
+                            .products(products)
+                            .dtCreated(order.getDtCreated())
+                            .dtUpdated(order.getDtUpdated())
+                            .build();
+                });
     }
 
     @Transactional
@@ -73,6 +92,53 @@ public class OrderService {
                 .dtUpdated(savedOrder.getDtUpdated())
                 .products(productResponseDTOS)
                 .build();
+
+    }
+
+    @Transactional
+    public Optional<OrderResponseDTO> replace(String orderId, OrderRequestDTO orderRequestDTO){
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if(orderOptional.isPresent()){
+            Order order = orderOptional.get();
+            order.setStatus(orderRequestDTO.getStatus());
+            order.setDtUpdated(LocalDateTime.now());
+
+            orderRepository.save(order);
+            orderRepository.deleteProductsFromOrderById(orderId);
+
+            orderRequestDTO.getProducts()
+                    .forEach(productOrderRequestDTO -> productService.findById(productOrderRequestDTO.getProductId())
+                            .ifPresent(product -> orderRepository.saveProductIntoOrder(
+                                    order.getId(),
+                                    productOrderRequestDTO.getProductId(),
+                                    productOrderRequestDTO.getQuantity())));
+
+
+            List<OrderProductResponseDTO> productResponseDTOS = orderRepository.findOrderWithProducts(order.getId())
+                    .stream()
+                    .map(orderProductRow ->
+                            OrderProductResponseDTO.builder()
+                                    .id(orderProductRow.getProductId())
+                                    .name(orderProductRow.getName())
+                                    .code(orderProductRow.getCode())
+                                    .price(orderProductRow.getPrice())
+                                    .build()
+                    ).toList();
+
+            OrderResponseDTO orderResponseDTO = OrderResponseDTO.builder()
+                    .id(order.getId())
+                    .status(order.getStatus())
+                    .dtCreated(order.getDtCreated())
+                    .dtUpdated(order.getDtUpdated())
+                    .products(productResponseDTOS)
+                    .build();
+
+            return Optional.of(orderResponseDTO);
+
+        }
+
+        return Optional.empty();
 
     }
 
