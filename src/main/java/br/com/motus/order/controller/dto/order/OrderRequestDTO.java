@@ -1,13 +1,13 @@
 package br.com.motus.order.controller.dto.order;
 
-import lombok.Builder;
-import lombok.Data;
-
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
-@Data
-@Builder
-public class OrderRequestDTO {
-    private List<OrderProductRequestDTO> products;
-    private String status;
+public record OrderRequestDTO(
+
+    @NotEmpty(message = "Product list must not be empty.")
+    List<OrderProductRequestDTO> products,
+    String status
+) {
+
 }

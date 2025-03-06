@@ -1,18 +1,22 @@
 package br.com.motus.order.controller.dto.order;
 
-import lombok.Builder;
-import lombok.Data;
-
+import br.com.motus.order.model.Order;
 import java.time.LocalDateTime;
-import java.util.List;
 
-@Data
-@Builder
-public class OrderListResponseDTO {
+public record OrderListResponseDTO(
+    String id,
+    String status,
+    LocalDateTime dtCreated,
+    LocalDateTime dtUpdated
+) {
 
-    private String id;
-    private String status;
-    private LocalDateTime dtCreated;
-    private LocalDateTime dtUpdated;
+  public OrderListResponseDTO(Order order) {
+    this(
+        order.getId(),
+        order.getStatus(),
+        order.getDtCreated(),
+        order.getDtUpdated()
+    );
+  }
 
 }

@@ -14,3 +14,8 @@ spring:
     show-sql: false
   main:
     banner-mode: "off"
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:12345678}

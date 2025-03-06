@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class OrderProductRequestDTO {
 
-    private String productId;
-    private int quantity;
+  private String productId;
+  private int quantity;
 
 }

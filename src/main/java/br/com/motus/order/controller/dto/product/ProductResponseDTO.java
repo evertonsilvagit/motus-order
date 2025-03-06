@@ -1,24 +1,28 @@
 package br.com.motus.order.controller.dto.product;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import br.com.motus.order.model.Product;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ProductResponseDTO {
+public record ProductResponseDTO(
+    String id,
+    String code,
+    String name,
+    BigDecimal price,
+    LocalDateTime dtCreated,
+    LocalDateTime dtUpdated
+) {
 
-    private String id;
-    private String code;
-    private String name;
-    private BigDecimal price;
-    private LocalDateTime dtCreated;
-    private LocalDateTime dtUpdated;
+  public ProductResponseDTO(Product product) {
+    this(
+        product.getId(),
+        product.getCode(),
+        product.getName(),
+        product.getPrice(),
+        product.getDtCreated(),
+        product.getDtUpdated()
+    );
+  }
 
 }
